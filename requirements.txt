@@ -1,0 +1,21 @@
+# Python 3.10 or newer.
+# Minimum versions are the first releases without known security issues
+# (checked with pip-audit, October 2026). Run `pip-audit -r requirements.txt` to re-check.
+requests>=2.33.0
+beautifulsoup4>=4.12
+lxml>=6.1.0
+pdfplumber>=0.11
+pdfminer.six>=20251230   # used by pdfplumber; older versions have known security issues
+pandas>=2.2
+pyarrow>=23.0.1
+numpy>=1.26
+duckdb>=1.1.0
+rapidfuzz>=3.6
+scikit-learn>=1.5.0
+reportlab>=4.0           # only for the sample-data generator (python -m nsq demo)
+streamlit>=1.54.0
+plotly>=5.20
+
+# Optional
+# prefect>=3.0        # orchestration (flows/monthly_flow.py)
+# anthropic>=0.40     # LLM fallback for pages without tables (python -m nsq parse --llm)

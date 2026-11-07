@@ -1,0 +1,33 @@
+{
+  "dataset": "REAL",
+  "horizon_months": 1,
+  "top_k": 20,
+  "train_rows": 32892,
+  "test_rows": 13983,
+  "test_period": "2024-07 to 2025-06",
+  "test_months": 12,
+  "base_rate": 0.0408,
+  "model_precision_at_k": 0.2958,
+  "baseline_precision_at_k": 0.3333,
+  "months_model_beats_baseline": 3,
+  "months_tied": 2,
+  "model_average_precision": 0.1668,
+  "baseline_average_precision": 0.1624,
+  "feature_importance": {
+    "months_since_last": 0.0556,
+    "flags_12m": 0.0371,
+    "flags_total": 0.0284,
+    "drugs_total": 0.0133,
+    "flags_6m": 0.0102,
+    "national_flags_1m": 0.0095,
+    "district_flags_6m": 0.0082,
+    "flags_1m": 0.0041,
+    "months_since_first": 0.0034,
+    "assay_diss_6m": 0.0011,
+    "injection_share": 0.0009,
+    "sterile_fail_6m": 0.0001,
+    "flags_3m": -0.0003
+  },
+  "watch_list_month": "2025-07",
+  "caveat": "Re-flag model on factories already flagged at least once. CDSCO samples are not random, so this predicts where regulators find failures, not true quality."
+}

@@ -1,0 +1,28 @@
+# Render Blueprint for the NSQ Medicine Tracker website (a free static site: no build, never sleeps).
+# Render dashboard: New > Blueprint > pick this repo. Or create a Static Site by hand with the same
+# settings: publish directory "site", build command left as below.
+services:
+  - type: web
+    runtime: static
+    name: nsq-medicine-tracker-site
+    buildCommand: echo "Static site, nothing to build"
+    staticPublishPath: ./site
+    headers:
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-ancestors 'none'"
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: "camera=(), microphone=(), geolocation=(), payment=()"
+      - path: /*.json
+        name: Cache-Control
+        value: "public, max-age=3600"

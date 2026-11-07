@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="color-scheme" content="dark">
+<title>NSQ Medicine Tracker</title>
+<meta name="description" content="Track, analyse and visualise the medicine batches India's drug regulator found Not of Standard Quality (NSQ) or fake.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='10' width='24' height='12' rx='6' transform='rotate(-35 16 16)' fill='%232fc8a8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--BODY-START-->
+<div class="sample" id="sample-note" hidden>
+  <p><strong>Sample data.</strong> Every company and brand on this page is invented, to show how the pipeline works. The real site loads CDSCO's published alerts.</p>
+</div>
+
+<header class="top">
+  <div class="wrap top-row">
+    <a class="brand" href="#dashboard" data-view="dashboard">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+        <g transform="rotate(-40 26 26)"><rect x="9" y="17" width="34" height="18" rx="9" class="logo-a"/><rect x="26" y="17" width="17" height="18" rx="0" class="logo-b"/><rect x="26" y="17" width="17" height="18" rx="9" class="logo-b"/></g>
+        <path d="M9 4v8M5 8h8" class="logo-plus"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name"><b>NSQ</b> Medicine Tracker</span>
+        <span class="brand-sub">Track, analyse and visualise Not of Standard Quality (NSQ) medicines in India</span>
+      </span>
+    </a>
+    <nav class="tabs" aria-label="Views">
+      <a class="tab" href="#dashboard" data-view="dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Dashboard</a>
+      <a class="tab" href="#analysis" data-view="analysis"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>Analysis</a>
+      <a class="tab" href="#search" data-view="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>Search</a>
+      <a class="tab" href="#about" data-view="about"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="load-error" id="load-error" hidden>The data file did not load. Reload the page; if it keeps failing, the site's data has not been published yet.</p>
+
+  <!-- ===================================================== Dashboard -->
+  <section class="view" id="view-dashboard" aria-label="Dashboard">
+    <div class="kpis" id="kpis"></div>
+
+    <div class="dash">
+      <article class="card a-monthly">
+        <div class="card-h">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>
+          <h2>Monthly flagged medicine batches</h2>
+          <div class="seg" role="group" aria-label="Time range">
+            <button type="button" data-range="12" aria-pressed="true">12 months</button>
+            <button type="button" data-range="all" aria-pressed="false">All</button>
+          </div>
+        </div>
+        <div class="chart" id="chart-total"></div>
+        <details class="numbers"><summary>Show the numbers</summary><div id="total-table"></div></details>
+      </article>
+
+      <article class="card a-lookup">
+        <div class="card-h">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <h2>Batch lookup</h2>
+        </div>
+        <form class="lookup-form" id="dash-form" role="search">
+          <label class="sr" for="dash-q">Batch number, medicine or manufacturer</label>
+          <input id="dash-q" type="search" maxlength="60" autocomplete="off" spellcheck="false" placeholder="Enter batch number or medicine (e.g. paracetamol)">
+          <button type="submit" class="btn">Search</button>
+        </form>
+        <div class="dash-results" id="dash-results"></div>
+      </article>
+
+      <article class="card a-offenders">
+        <div class="card-h">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20V10l5 3V10l5 3V10l5 3V5h3v15z"/></svg>
+          <h2 id="offenders-h">Repeat-offender factories</h2>
+        </div>
+        <div class="table-wrap"><table class="grid-table" id="offenders-table"></table></div>
+        <a class="card-link" href="#analysis" data-view="analysis" data-scroll="factories">See every factory and its timeline</a>
+      </article>
+
+      <article class="card a-states">
+        <div class="card-h">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z"/></svg>
+          <h2>Flagged batches by state</h2>
+        </div>
+        <p class="card-sub">Where the factories that made the flagged batches are. Fakes are left out, because a fake carries an innocent company's name.</p>
+        <div class="states-body">
+          <div class="tilemap" id="tilemap"></div>
+          <div class="table-wrap"><table class="grid-table" id="states-table"></table></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="caution" role="note">
+      <p class="caution-head">Read before quoting</p>
+      <p>A flag means one tested batch failed. It is not a verdict on a company or on its other batches. Samples are picked by inspectors, not at random, so more flags can mean more testing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== Analysis -->
+  <section class="view" id="view-analysis" aria-label="Analysis" hidden>
+    <article class="card" id="monthly">
+      <h2>Who reported the failures</h2>
+      <p class="card-sub" id="monthly-sub"></p>
+      <div class="legend" id="monthly-legend"></div>
+      <div class="chart" id="chart-monthly"></div>
+      <details class="numbers"><summary>Show the numbers</summary><div id="monthly-table"></div></details>
+    </article>
+
+    <article class="card" id="factories">
+      <h2 id="factories-h">Factories flagged again and again</h2>
+      <p class="card-sub">Each row is one factory site. Each dot is a month it was flagged, and bigger dots mean more batches that month. Fakes are left out. Select a factory to see its batches.</p>
+      <div class="timeline-axis" id="factory-axis" aria-hidden="true"></div>
+      <ol class="factory-list" id="factory-list"></ol>
+      <button class="more" type="button" id="factory-more" hidden>Show all factories</button>
+    </article>
+
+    <div class="pair">
+      <article class="card" id="where">
+        <h2>Top districts</h2>
+        <p class="card-sub" id="where-sub"></p>
+        <div class="bars" id="where-bars"></div>
+      </article>
+      <article class="card" id="why">
+        <h2>Why batches failed</h2>
+        <p class="card-sub" id="why-sub"></p>
+        <div class="chips" id="why-chips" role="group" aria-label="Dosage form"></div>
+        <div class="bars" id="why-bars"></div>
+      </article>
+    </div>
+
+    <article class="card">
+      <h2>What the tests mean</h2>
+      <dl class="glossary" id="glossary"></dl>
+    </article>
+
+    <article class="card" id="gaps">
+      <h2>Which states report, and when</h2>
+      <p class="card-sub" id="gaps-sub"></p>
+      <div class="heat-legend" id="heat-legend"></div>
+      <div class="heat-scroll"><div class="heat" id="heat"></div></div>
+      <div class="pending" id="pending"></div>
+    </article>
+
+    <article class="card" id="fakes">
+      <h2>Top brands in the alerts</h2>
+      <p class="card-sub" id="fakes-sub"></p>
+      <div class="legend" id="fakes-legend"></div>
+      <div class="bars grouped" id="fakes-bars"></div>
+    </article>
+
+    <article class="card" id="watch">
+      <h2>Watch list for next month</h2>
+      <p class="card-sub" id="watch-sub"></p>
+      <div id="watch-body"></div>
+    </article>
+  </section>
+
+  <!-- ===================================================== Search -->
+  <section class="view" id="view-search" aria-label="Search" hidden>
+    <article class="card" id="lookup">
+      <h2>Look up a batch</h2>
+      <p class="card-sub">Check whether a medicine you have was flagged. Search by the batch number printed on the strip (B.No.), the medicine's name, or the manufacturer.</p>
+      <label class="search-label" for="q">Batch number, medicine or manufacturer</label>
+      <input class="search" id="q" type="search" maxlength="60" autocomplete="off" spellcheck="false" placeholder="e.g. paracetamol, or a batch number">
+      <p class="search-status" id="q-status" aria-live="polite"></p>
+      <ol class="results" id="q-results"></ol>
+    </article>
+  </section>
+
+  <!-- ===================================================== About -->
+  <section class="view" id="view-about" aria-label="About" hidden>
+    <article class="card" id="method">
+      <h2>How it works</h2>
+      <p class="card-sub" id="about-lede">Every month India's drug regulator, CDSCO, lists the medicine batches its labs found not of standard quality, or fake. This site joins every list and traces each batch back to the factory that made it.</p>
+      <div class="method-grid">
+        <ol class="steps">
+          <li><strong>Collect.</strong> Downloads every monthly alert list from CDSCO's website, and the newer lists from its NSQ portal.</li>
+          <li><strong>Read.</strong> Pulls the tables out of the PDFs, in both the old and new layouts, and checks the row count against the totals each list states.</li>
+          <li><strong>Clean.</strong> Standardises medicine names, dates and failure reasons, and finds each factory's state and district from its address and PIN code.</li>
+          <li><strong>Link.</strong> Matches the many spellings of each manufacturer to one company and one factory site.</li>
+          <li><strong>Store.</strong> Loads everything into a DuckDB database in layered SQL tables.</li>
+          <li><strong>Check.</strong> Runs data quality checks on every build.</li>
+          <li><strong>Predict.</strong> Ranks factories by their chance of being flagged next month, and tests that against a simple rule.</li>
+          <li><strong>Publish.</strong> Writes the data files this page reads.</li>
+        </ol>
+        <div class="method-side">
+          <h3>Data quality</h3>
+          <ul class="quality" id="quality"></ul>
+          <h3>Limits</h3>
+          <ul class="limits">
+            <li>CDSCO publishes only the batches that failed, not how many each company had tested, so there are no failure rates here.</li>
+            <li>Spurious (fake) batches carry an innocent company's name, so they never count against that company.</li>
+            <li>Some states send no list in some months. A gap means no report, not no failures.</li>
+            <li>The watch list only covers factories flagged before, and predicts where inspectors find failures, not true quality.</li>
+          </ul>
+          <h3>Sources and code</h3>
+          <ul class="links">
+            <li><a href="https://cdsco.gov.in/opencms/opencms/en/Notifications/Alerts/" rel="noopener" target="_blank">CDSCO drug alerts</a></li>
+            <li><a href="https://cdscoonline.gov.in/CDSCO/viewPublicNSQDrug" rel="noopener" target="_blank">CDSCO NSQ portal</a></li>
+            <li><a href="https://github.com/Swa-hub/Medico" rel="noopener" target="_blank">Code on GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap"><p id="foot-text">Data from CDSCO's monthly drug alerts. Built with Python, DuckDB and scikit-learn.</p></div>
+</footer>
+
+<div class="tip" id="tip" hidden></div>
+<!--BODY-END-->
+<script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Security settings for the dashboard (local and Streamlit Community Cloud).
+
+[client]
+# "Debug mode" off: visitors see a generic message, never a traceback or file paths.
+# Full errors still print in the terminal / Cloud logs.
+showErrorDetails = "none"
+showErrorLinks = false
+# Hide developer options (rerun, clear cache, deploy) from visitors.
+toolbarMode = "viewer"
+
+[server]
+# Block requests from other websites (CORS) and cross-site request forgery (XSRF).
+enableCORS = true
+enableXsrfProtection = true
+# Nothing is served from a static folder and nothing can be uploaded.
+enableStaticServing = false
+maxUploadSize = 1
+runOnSave = false
+
+[browser]
+gatherUsageStats = false

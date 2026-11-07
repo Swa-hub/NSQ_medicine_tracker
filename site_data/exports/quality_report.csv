@@ -1,0 +1,12 @@
+check,status,value,detail
+rows match stated totals,FAIL,42/57 files,"files: 2019-10_combined_5224.pdf, 2019-11_combined_5349.pdf, 2019-12_combined_6840.pdf, 2021-05_combined_7357.pdf, 2021-08_combined_7656.pdf"
+files parsed without errors,PASS,128/128,
+pages with rows but no table found,WARN,6,re-run with --llm to read these pages
+rows with a batch number,PASS,99.9%,
+rows with a manufacturer,PASS,99.8%,
+rows with a drug name,PASS,99.9%,
+non-spurious rows linked to a site,PASS,99.8%,
+manufacture date before expiry,WARN,3675/3677,2 rows have mfg after expiry
+states from address text or district (not PIN alone),PASS,87.7%,a state taken from the PIN code alone is approximate
+months with at least one alert,WARN,77/78,missing: 2021-06
+rows read by the LLM fallback,PASS,0,none
